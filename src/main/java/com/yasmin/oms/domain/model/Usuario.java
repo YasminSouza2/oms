@@ -37,6 +37,10 @@ public class Usuario {
     @Column(length = 14)
     private String cpf;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "role", nullable = false, length = 20)
+    private Role role = Role.CLIENTE;
+
     @Column(name = "data_cadastro", nullable = false, updatable = false)
     private LocalDateTime dataCadastro;
 
@@ -46,10 +50,11 @@ public class Usuario {
     @OneToMany(mappedBy = "usuario")
     private List<Pedido> pedidos = new ArrayList<>();
 
-    public Usuario(String nome, String email, String senha) {
+    public Usuario(String nome, String email, String senha, Role role) {
         this.nome = nome;
         this.email = email;
         this.senha = senha;
+        this.role = role != null ? role : Role.CLIENTE;
         this.dataCadastro = LocalDateTime.now();
     }
 }

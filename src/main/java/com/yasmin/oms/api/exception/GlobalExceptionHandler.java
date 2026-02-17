@@ -9,6 +9,9 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.AuthenticationException;
+
 import java.time.Instant;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -43,6 +46,35 @@ public class GlobalExceptionHandler {
                 .path(request.getRequestURI())
                 .build();
         return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(error);
+    }
+
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<ErrorResponse> handleAccessDenied(
+            AccessDeniedException ex, HttpServletRequest request) {
+        log.warn("Acesso negado: {}", ex.getMessage());
+        ErrorResponse error = ErrorResponse.builder()
+                .timestamp(Instant.now())
+                .status(HttpStatus.FORBIDDEN.value())
+                .error("Forbidden")
+                .message("Você não tem permissão para acessar este recurso.")
+                .path(request.getRequestURI())
+                .build();
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(error);
+    }
+
+    @ExceptionHandler(AuthenticationException.class)
+    public ResponseEntity<ErrorResponse> handleAuthentication(
+            AuthenticationException ex, HttpServletRequest request) {
+        log.warn("Falha na autenticação: {} - {}", ex.getClass().getSimpleName(), ex.getMessage());
+        String mensagem = "Email ou senha inválidos. Verifique suas credenciais.";
+        ErrorResponse error = ErrorResponse.builder()
+                .timestamp(Instant.now())
+                .status(HttpStatus.UNAUTHORIZED.value())
+                .error("Unauthorized")
+                .message(mensagem)
+                .path(request.getRequestURI())
+                .build();
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(error);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)

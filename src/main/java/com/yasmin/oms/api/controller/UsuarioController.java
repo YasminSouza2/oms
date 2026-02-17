@@ -7,6 +7,7 @@ import com.yasmin.oms.application.service.UsuarioService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -21,16 +22,19 @@ public class UsuarioController {
     private final UsuarioService usuarioService;
 
     @GetMapping
+    @PreAuthorize("hasAnyRole('ADMIN','FUNCIONARIO')")
     public ResponseEntity<List<UsuarioResponse>> listar() {
         return ResponseEntity.ok(usuarioService.listarTodos());
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN','FUNCIONARIO') or #id.equals(authentication.principal.id)")
     public ResponseEntity<UsuarioResponse> buscar(@PathVariable UUID id) {
         return ResponseEntity.ok(usuarioService.buscarPorId(id));
     }
 
     @PostMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<UsuarioResponse> criar(@Valid @RequestBody UsuarioRequest request) {
         UsuarioResponse response = usuarioService.criar(request);
         var uri = ServletUriComponentsBuilder.fromCurrentRequest()
@@ -41,6 +45,7 @@ public class UsuarioController {
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN') or #id.equals(authentication.principal.id)")
     public ResponseEntity<UsuarioResponse> atualizar(
             @PathVariable UUID id,
             @Valid @RequestBody UsuarioUpdateRequest request) {
@@ -48,6 +53,7 @@ public class UsuarioController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> excluir(@PathVariable UUID id) {
         usuarioService.excluir(id);
         return ResponseEntity.noContent().build();

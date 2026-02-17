@@ -7,6 +7,7 @@ import com.yasmin.oms.application.service.ProdutoService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -31,6 +32,7 @@ public class ProdutoController {
     }
 
     @PostMapping
+    @PreAuthorize("hasAnyRole('ADMIN','FUNCIONARIO')")
     public ResponseEntity<ProdutoResponse> criar(@Valid @RequestBody ProdutoRequest request) {
         ProdutoResponse response = produtoService.criar(request);
         var uri = ServletUriComponentsBuilder.fromCurrentRequest()
@@ -41,6 +43,7 @@ public class ProdutoController {
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN','FUNCIONARIO')")
     public ResponseEntity<ProdutoResponse> atualizar(
             @PathVariable UUID id,
             @Valid @RequestBody ProdutoUpdateRequest request) {
@@ -48,6 +51,7 @@ public class ProdutoController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN','FUNCIONARIO')")
     public ResponseEntity<Void> excluir(@PathVariable UUID id) {
         produtoService.excluir(id);
         return ResponseEntity.noContent().build();

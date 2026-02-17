@@ -6,10 +6,12 @@ import com.yasmin.oms.api.dto.request.PedidoStatusRequest;
 import com.yasmin.oms.api.dto.response.*;
 import com.yasmin.oms.api.exception.BusinessException;
 import com.yasmin.oms.api.exception.ResourceNotFoundException;
+import com.yasmin.oms.config.security.SecurityUtils;
 import com.yasmin.oms.domain.model.*;
 import com.yasmin.oms.domain.repository.PedidoRepository;
 import com.yasmin.oms.domain.repository.ProdutoRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -47,6 +49,10 @@ public class PedidoService {
     public PedidoResponse buscarPorId(UUID id) {
         Pedido pedido = pedidoRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Pedido", id));
+        SecurityUtils.getCurrentUser()
+                .filter(p -> p.getRole() == Role.CLIENTE)
+                .filter(p -> !pedido.getUsuario().getId().equals(p.getId()))
+                .ifPresent(p -> { throw new AccessDeniedException("Acesso negado a este pedido"); });
         return toResponse(pedido);
     }
 

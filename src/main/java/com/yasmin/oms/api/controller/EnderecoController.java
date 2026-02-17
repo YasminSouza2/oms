@@ -6,6 +6,7 @@ import com.yasmin.oms.application.service.EnderecoService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -20,11 +21,13 @@ public class EnderecoController {
     private final EnderecoService enderecoService;
 
     @GetMapping
+    @PreAuthorize("hasRole('ADMIN') or hasRole('FUNCIONARIO') or #usuarioId.equals(authentication.principal.id)")
     public ResponseEntity<List<EnderecoResponse>> listar(@PathVariable UUID usuarioId) {
         return ResponseEntity.ok(enderecoService.listarPorUsuario(usuarioId));
     }
 
     @GetMapping("/{enderecoId}")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('FUNCIONARIO') or #usuarioId.equals(authentication.principal.id)")
     public ResponseEntity<EnderecoResponse> buscar(
             @PathVariable UUID usuarioId,
             @PathVariable UUID enderecoId) {
@@ -32,6 +35,7 @@ public class EnderecoController {
     }
 
     @PostMapping
+    @PreAuthorize("hasRole('ADMIN') or hasRole('FUNCIONARIO') or #usuarioId.equals(authentication.principal.id)")
     public ResponseEntity<EnderecoResponse> criar(
             @PathVariable UUID usuarioId,
             @Valid @RequestBody EnderecoRequest request) {
@@ -44,6 +48,7 @@ public class EnderecoController {
     }
 
     @PutMapping("/{enderecoId}")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('FUNCIONARIO') or #usuarioId.equals(authentication.principal.id)")
     public ResponseEntity<EnderecoResponse> atualizar(
             @PathVariable UUID usuarioId,
             @PathVariable UUID enderecoId,
@@ -52,6 +57,7 @@ public class EnderecoController {
     }
 
     @DeleteMapping("/{enderecoId}")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('FUNCIONARIO') or #usuarioId.equals(authentication.principal.id)")
     public ResponseEntity<Void> excluir(
             @PathVariable UUID usuarioId,
             @PathVariable UUID enderecoId) {
