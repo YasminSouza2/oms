@@ -106,6 +106,12 @@
 			<artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
 			<version>2.3.0</version>
 		</dependency>
+		<!-- Modelos OpenAPI (evita ClassNotFoundException com DevTools) -->
+		<dependency>
+			<groupId>io.swagger.core.v3</groupId>
+			<artifactId>swagger-models</artifactId>
+			<version>2.2.22</version>
+		</dependency>
 
 	</dependencies>
 

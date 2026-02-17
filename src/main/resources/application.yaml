@@ -3,9 +3,14 @@ app:
     secret: minhaChaveSecretaParaJWTComPeloMenos32CaracteresAlterarEmProducao
     expiration-ms: 86400000  # 24 horas
 
+server:
+  shutdown: graceful
+
 spring:
   application:
     name: Order Management System
+  lifecycle:
+    timeout-per-shutdown-phase: 30s
   datasource:
     url: jdbc:postgresql://localhost:5432/oms_db
     username: oms_user
