@@ -1,0 +1,14 @@
+spring:
+  application:
+    name: Order Management System
+  datasource:
+    url: jdbc:postgresql://localhost:5432/oms_db
+    username: oms_user
+    password: oms_pass
+
+  jpa:
+    open-in-view: false
+    hibernate:
+     ddl-auto: validate
+
+
