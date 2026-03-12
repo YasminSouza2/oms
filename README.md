@@ -205,7 +205,7 @@ Origins permitidas: `localhost:3000`, `localhost:4200`, `localhost:5173` (e vari
 
 ---
 
-## API REST — Endpoints
+## API REST - Endpoints
 
 ### Autenticação — `/api/auth`
 
